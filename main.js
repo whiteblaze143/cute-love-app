@@ -449,6 +449,41 @@ function init() {
         if (e.key === 'y' || e.key === 'Y') handleYesClick();
         if (e.key === 'n' || e.key === 'N') handleNoClick();
     });
+
+    // Ensure diagnostic overlay cannot accidentally block a successfully-booted app
+    try {
+        const diag = document.getElementById('app-diagnostic');
+        if (diag) {
+            diag.style.display = 'none';
+            diag.style.pointerEvents = 'none';
+            diag.setAttribute('aria-hidden', 'true');
+        }
+        document.documentElement.classList.remove('panic-restore');
+        if (mainCard) {
+            mainCard.style.display = 'block';
+            mainCard.style.opacity = '1';
+            mainCard.style.transform = 'none';
+        }
+
+        // watch the diag element and suppress it if the app is already booted
+        if (diag) {
+            const mo = new MutationObserver(mutations => {
+                if (window.__APP_BOOTED__) {
+                    mutations.forEach(m => {
+                        if (m.type === 'attributes') {
+                            if (diag.style.display !== 'none' || getComputedStyle(diag).visibility === 'visible') {
+                                diag.style.display = 'none';
+                                diag.style.pointerEvents = 'none';
+                                diag.setAttribute('aria-hidden', 'true');
+                                console.info('DEBUG: suppressed app-diagnostic after boot');
+                            }
+                        }
+                    });
+                }
+            });
+            mo.observe(diag, { attributes: true, attributeFilter: ['style', 'class'] });
+        }
+    } catch (err) { console.warn('DEBUG: suppress-diag failed', err); }
 }
 
 // Typewriter effect
