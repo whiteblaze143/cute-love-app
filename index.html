@@ -4,233 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For My Favorite Person ❤️</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;600&family=Pacifico&family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'cute-cream': '#fffbe7',
+              'cute-pink': '#ff4d8d',
+              'cute-maroon': '#6e1630',
+              'cute-yellow': '#ffe066',
+              'cute-blue': '#b5ead7',
+            },
+            fontFamily: {
+              pixel: ['"Press Start 2P"', 'cursive'],
+              hand: ['"Dancing Script"', 'cursive'],
+              title: ['"Pacifico"', 'cursive'],
+              body: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'wiggle': 'wiggle 1s ease-in-out infinite',
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+              'shake-hard': 'shakeHard 0.2s cubic-bezier(.36,.07,.19,.97) both',
+              'spin-slow': 'spin 8s linear infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              wiggle: {
+                '0%, 100%': { transform: 'rotate(-3deg)' },
+                '50%': { transform: 'rotate(3deg)' },
+              },
+              popIn: {
+                '0%': { opacity: '0', transform: 'scale(0.5)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              shake: {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+              },
+              shakeHard: {
+                '0%, 100%': { transform: 'translate3d(0, 0, 0)' },
+                '10%, 90%': { transform: 'translate3d(-8px, -2px, 0)' },
+                '20%, 80%': { transform: 'translate3d(8px, 2px, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-10px, 4px, 0)' },
+                '40%, 60%': { transform: 'translate3d(10px, -4px, 0)' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="24" font-size="24">❤️</text></svg>') 8 8, auto;
+        background-image: radial-gradient(#ffafbd 1px, transparent 1px), radial-gradient(#ffe066 1px, transparent 1px);
+        background-size: 40px 40px;
+        background-position: 0 0, 20px 20px;
+        background-color: #fffbe7;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #fffbe7; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ff4d8d; 
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #6e1630; 
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <!-- Early diagnostic overlay (appears if app fails to boot) -->
-    <div id="app-diagnostic" aria-live="polite" role="alert" style="display:none;">
-      <div class="diag-inner">
-        <h2>App failed to start — quick diagnostics</h2>
-        <div id="diag-output">Waiting for app...</div>
-        <div class="diag-actions">
-          <button id="diag-run" class="btn">Run diagnostics</button>
-          <button id="diag-force" class="btn">Force-enable UI</button>
-          <button id="diag-copy" class="btn">Copy diag text</button>
-          <button id="diag-devtools" class="btn">How to open DevTools</button>
-        </div>
-        <details><summary>What to send me</summary>
-          <ol><li>Open DevTools (F12) → Console and copy any errors</li><li>Click <em>Run diagnostics</em> and paste the output here</li></ol>
-        </details>
-      </div>
-    </div>
-
-    <!-- Skip link for keyboard users -->
-    <a class="skip-link" href="#main-content">Skip to content</a>
-    <button id="share-btn" class="btn" tabindex="0">Share this cuteness!</button>
-    <div class="cute-points-bar">
-        <span class="pixel-heart">❤️</span>
-        <span id="cute-points">0</span> Cute Points
-    </div>
-    <div class="floating-hearts"></div>
-    <div class="floating-sparkles"></div>
-    <!-- Cuddly animal corner stickers (now semantic buttons for accessibility) -->
-    <button class="animal-sticker bear-sticker" aria-label="teddy bear sticker" tabindex="0"></button>
-    <button class="animal-sticker bunny-sticker" aria-label="bunny sticker" tabindex="0"></button>
-    <div class="container">
-        <main id="main-content" role="main">
-        <div class="card" id="main-card">
-            <div class="header">
-                <h1 class="secret-title">Just for you...</h1>
-            </div>
-            
-            <div class="content">
-                <div class="typewriter-container">
-                    <div class="typewriter-text" id="story-text"></div>
-                    <div class="cursor">|</div>
-                </div>
-                
-                <div class="button-container" id="buttons">
-                    <button class="btn yes-btn" id="yes-btn" aria-pressed="false" tabindex="0">
-                        <i class="fas fa-heart"></i> Yes, absolutely!
-                    </button>
-                    <button class="btn no-btn" id="no-btn" aria-pressed="false" tabindex="0">
-                        <i class="fas fa-question"></i> Umm, let me think...
-                    </button>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <div class="heartbeat">
-                    <i class="fas fa-heart"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Hidden success screen -->
-        <div class="card success-card" id="success-card">
-            <div class="success-content">
-                <h1 class="success-title">You just made my whole year, <span class="nickname">Joji</span> ❤️</h1>
-                
-                <div class="love-letter">
-                    <div class="letter-header">
-                        <div class="seal"></div>
-                        <h3>A little note just for you...</h3>
-                    </div>
-                    <p class="letter-body">
-                        My dearest Joanna,<br><br>
-                        I know I'm not always the best with words, but I wanted to create something special that shows how much you mean to me. Every day with you feels like finding another piece of myself I didn't know was missing. You make the ordinary magical and the difficult manageable just by being you.<br><br>
-                        Thank you for being my safe harbor, my biggest supporter, and my favorite adventure. I can't wait for all our tomorrows.
-                    </p>
-                    <div class="letter-footer">
-                        <p>Forever yours,</p>
-                        <p class="signature">Mithun</p>
-                    </div>
-                </div>
-                
-                <div class="reasons-container">
-                    <h3><i class="fas fa-star"></i> Just a few reasons why you're incredible:</h3>
-                    <ul class="reasons-list">
-                        <li><span class="reason-number">01</span> Your smile is my favorite thing in the world</li>
-                        <li><span class="reason-number">02</span> You make ordinary moments feel special</li>
-                        <li><span class="reason-number">03</span> You believe in me even when I doubt myself</li>
-                        <li><span class="reason-number">04</span> Your laugh could power a small city</li>
-                        <li><span class="reason-number">05</span> Your commitment to our relationship inspires me every day</li>
-                    </ul>
-                </div>
-                
-                <div class="photo-frame">
-                    <div class="polaroid">
-                        <button class="polaroid-img" id="memory-photo" tabindex="0" aria-label="photo frame - drop a heart here">
-                            <!-- Photo will appear here -->
-                            <div class="photo-placeholder">
-                                <i class="fas fa-heart"></i>
-                                <p>Our favorite memory</p>
-                            </div>
-                        </button> 
-                        <div class="polaroid-caption">Every moment with you is my favorite ❤️</div>
-                    </div>
-                </div>
-                
-                <button class="btn replay-btn" id="replay-btn">
-                    <i class="fas fa-redo"></i> Watch it again?
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <audio id="background-music" loop preload="none" aria-hidden="true">
-        <source src="https://assets.mixkit.co/music/preview/mixkit-love-of-my-life-1031.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Accessible music control -->
-    <button id="music-toggle" class="btn music-toggle" aria-pressed="false" aria-label="Play background music" title="Play/pause music">♪</button>
-
-    <script>
-    // Early diagnostic watcher — runs before main.js so it can catch parse/runtime failures
-    (function(){
-      const diag = document.getElementById('app-diagnostic');
-      window.__DIAG_LOGS__ = [];
-      window.addEventListener('error', ev => {
-        window.__DIAG_LOGS__.push('ERROR: ' + (ev.message || ev.error || ev.filename || ev.type));
-      });
-      window.addEventListener('unhandledrejection', ev => {
-        window.__DIAG_LOGS__.push('UNHANDLED REJECTION: ' + (ev.reason && ev.reason.message ? ev.reason.message : String(ev.reason)));
-      });
-
-      function showDiag(msg){
-        if (!diag) return;
-        diag.style.display = 'grid';
-        const out = document.getElementById('diag-output');
-        out.textContent = msg + '\n\nConsole (last):\n' + (window.__DIAG_LOGS__.slice(-12).join('\n') || '(none)');
-      }
-
-      // Buttons
-      document.addEventListener('click', (e) => {
-        if (!e.target) return;
-        if (e.target.id === 'diag-run') {
-          const main = document.getElementById('main-card');
-          const bodyEmpty = document.body.children.length < 6;
-          const visible = main && window.getComputedStyle(main).display !== 'none' && window.getComputedStyle(main).opacity !== '0';
-          showDiag('bootFlag=' + !!window.__APP_BOOTED__ + '\nbodyChildren=' + document.body.children.length + '\nmainPresent=' + !!main + '\nmainVisible=' + visible + '\nuserAgent=' + navigator.userAgent);
-        }
-        if (e.target.id === 'diag-force') {
-          // best-effort fixes: unhide main elements and enable pointer-events
-          document.querySelectorAll('body *').forEach(el => { el.style.pointerEvents = 'auto'; });
-          ['main-card','buttons','success-card'].forEach(id => {
-            const el = document.getElementById(id); if (el) { el.style.display = 'block'; el.style.opacity = '1'; }
-          });
-          showDiag('Forced UI enable applied — try interacting now.');
-        }
-        if (e.target.id === 'diag-copy') {
-          const out = document.getElementById('diag-output').textContent;
-          try { navigator.clipboard.writeText(out); e.target.textContent = 'Copied!'; setTimeout(()=> e.target.textContent = 'Copy diag text',1200);} catch { alert(out); }
-        }
-        if (e.target.id === 'diag-devtools') {
-          showDiag('Open DevTools: press F12 (Windows) / Cmd+Option+I (mac). Look at Console tab and paste any errors here.');
-        }
-      });
-
-      // If the app hasn't booted after 1.4s show the overlay and run checks
-      function inspectTopLayer() {
-        try {
-          const all = Array.from(document.querySelectorAll('body *'));
-          const vw = innerWidth, vh = innerHeight;
-          const candidates = all.filter(el => {
-            const r = el.getBoundingClientRect();
-            return r.width >= vw * 0.9 && r.height >= vh * 0.9;
-          });
-          if (!candidates.length) return 'topLayer: none';
-          return candidates.map(el => {
-            const s = getComputedStyle(el);
-            return ['tag='+el.tagName.toLowerCase(), 'id='+ (el.id||'<no-id>'), 'cls='+ (el.className||'<no-class>').toString().slice(0,80), 'z=' + (s.zIndex||'<auto>'), 'pe=' + s.pointerEvents, 'vis=' + s.visibility, 'opa=' + s.opacity].join(' | ');
-          }).join('\n----\n');
-        } catch (err) { return 'inspectTopLayer error: '+String(err); }
-      }
-
-      setTimeout(() => {
-        if (!window.__APP_BOOTED__) {
-          const report = inspectTopLayer();
-          // If something large is covering the viewport and has pointer-events enabled, auto-apply the panic-restore so the user can interact immediately.
-          if (report && report !== 'topLayer: none' && /pe=auto|pe=visible/.test(report)) {
-            document.documentElement.classList.add('panic-restore');
-          }
-          showDiag('App did not signal successful boot within 1.4s.\nThis overlay helps gather diagnostics you can paste to the developer.\n\n' + report);
-        }
-      }, 1400);
-
-      // enhance the existing diag buttons to apply a stronger 'panic restore' when requested
-      document.addEventListener('click', (e) => {
-        if (!e.target) return;
-        if (e.target.id === 'diag-run') {
-          const main = document.getElementById('main-card');
-          const bodyEmpty = document.body.children.length < 6;
-          const visible = main && window.getComputedStyle(main).display !== 'none' && window.getComputedStyle(main).opacity !== '0';
-          showDiag('bootFlag=' + !!window.__APP_BOOTED__ + '\nbodyChildren=' + document.body.children.length + '\nmainPresent=' + !!main + '\nmainVisible=' + visible + '\nuserAgent=' + navigator.userAgent + '\n\n' + inspectTopLayer());
-        }
-        if (e.target.id === 'diag-force') {
-          // best-effort fixes: unhide main elements and enable pointer-events
-          document.documentElement.classList.add('panic-restore');
-          document.querySelectorAll('body *').forEach(el => { el.style.pointerEvents = 'auto'; el.style.visibility = 'visible'; });
-          ['main-card','buttons','success-card'].forEach(id => {
-            const el = document.getElementById(id); if (el) { el.style.display = 'block'; el.style.opacity = '1'; el.style.transform = 'none'; }
-          });
-          showDiag('Forced UI (panic-restore) applied — try interacting now.\n\n' + inspectTopLayer());
-        }
-        if (e.target.id === 'diag-copy') {
-          const out = document.getElementById('diag-output').textContent;
-          try { navigator.clipboard.writeText(out); e.target.textContent = 'Copied!'; setTimeout(()=> e.target.textContent = 'Copy diag text',1200);} catch { alert(out); }
-        }
-        if (e.target.id === 'diag-devtools') {
-          showDiag('Open DevTools: press F12 (Windows) / Cmd+Option+I (mac). Look at Console tab and paste any errors here.');
-        }
-      });
-    })();
-    </script>
-    <script src="main.js"></script>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
