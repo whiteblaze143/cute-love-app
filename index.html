@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Favorite Person ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+        <button id="share-btn" class="btn" style="position:fixed;bottom:24px;right:24px;z-index:200;">Share this cuteness!</button>
+    <div class="cute-points-bar">
+        <span class="pixel-heart">❤️</span>
+        <span id="cute-points">0</span> Cute Points
+    </div>
+    <div class="floating-hearts"></div>
+    <div class="floating-sparkles"></div>
+    <!-- Cuddly animal corner stickers -->
+    <div class="animal-sticker bear-sticker"></div>
+    <div class="animal-sticker bunny-sticker"></div>
+    <div class="container">
+        <div class="card" id="main-card">
+            <div class="header">
+                <h1 class="secret-title">Just for you...</h1>
+            </div>
+            
+            <div class="content">
+                <div class="typewriter-container">
+                    <div class="typewriter-text" id="story-text"></div>
+                    <div class="cursor">|</div>
+                </div>
+                
+                <div class="button-container" id="buttons" style="display: none;">
+                    <button class="btn yes-btn" id="yes-btn">
+                        <i class="fas fa-heart"></i> Yes, absolutely!
+                    </button>
+                    <button class="btn no-btn" id="no-btn">
+                        <i class="fas fa-question"></i> Umm, let me think...
+                    </button>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="heartbeat">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden success screen -->
+        <div class="card success-card" id="success-card" style="display: none;">
+            <div class="success-content">
+                <h1 class="success-title">You just made my whole year, <span class="nickname">Joji</span> ❤️</h1>
+                
+                <div class="love-letter">
+                    <div class="letter-header">
+                        <div class="seal"></div>
+                        <h3>A little note just for you...</h3>
+                    </div>
+                    <p class="letter-body">
+                        My dearest Joanna,<br><br>
+                        I know I'm not always the best with words, but I wanted to create something special that shows how much you mean to me. Every day with you feels like finding another piece of myself I didn't know was missing. You make the ordinary magical and the difficult manageable just by being you.<br><br>
+                        Thank you for being my safe harbor, my biggest supporter, and my favorite adventure. I can't wait for all our tomorrows.
+                    </p>
+                    <div class="letter-footer">
+                        <p>Forever yours,</p>
+                        <p class="signature">Mithun</p>
+                    </div>
+                </div>
+                
+                <div class="reasons-container">
+                    <h3><i class="fas fa-star"></i> Just a few reasons why you're incredible:</h3>
+                    <ul class="reasons-list">
+                        <li><span class="reason-number">01</span> Your smile is my favorite thing in the world</li>
+                        <li><span class="reason-number">02</span> You make ordinary moments feel special</li>
+                        <li><span class="reason-number">03</span> You believe in me even when I doubt myself</li>
+                        <li><span class="reason-number">04</span> Your laugh could power a small city</li>
+                        <li><span class="reason-number">05</span> Your commitment to our relationship inspires me every day</li>
+                    </ul>
+                </div>
+                
+                <div class="photo-frame">
+                    <div class="polaroid">
+                        <div class="polaroid-img" id="memory-photo">
+                            <!-- Photo will appear here -->
+                            <div class="photo-placeholder">
+                                <i class="fas fa-heart"></i>
+                                <p>Our favorite memory</p>
+                            </div>
+                        </div>
+                        <div class="polaroid-caption">Every moment with you is my favorite ❤️</div>
+                    </div>
+                </div>
+                
+                <button class="btn replay-btn" id="replay-btn">
+                    <i class="fas fa-redo"></i> Watch it again?
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="background-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-love-of-my-life-1031.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script src="main.js"></script>
+</body>
+</html>
