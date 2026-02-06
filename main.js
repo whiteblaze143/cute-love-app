@@ -450,40 +450,7 @@ function init() {
         if (e.key === 'n' || e.key === 'N') handleNoClick();
     });
 
-    // Ensure diagnostic overlay cannot accidentally block a successfully-booted app
-    try {
-        const diag = document.getElementById('app-diagnostic');
-        if (diag) {
-            diag.style.display = 'none';
-            diag.style.pointerEvents = 'none';
-            diag.setAttribute('aria-hidden', 'true');
-        }
-        document.documentElement.classList.remove('panic-restore');
-        if (mainCard) {
-            mainCard.style.display = 'block';
-            mainCard.style.opacity = '1';
-            mainCard.style.transform = 'none';
-        }
-
-        // watch the diag element and suppress it if the app is already booted
-        if (diag) {
-            const mo = new MutationObserver(mutations => {
-                if (window.__APP_BOOTED__) {
-                    mutations.forEach(m => {
-                        if (m.type === 'attributes') {
-                            if (diag.style.display !== 'none' || getComputedStyle(diag).visibility === 'visible') {
-                                diag.style.display = 'none';
-                                diag.style.pointerEvents = 'none';
-                                diag.setAttribute('aria-hidden', 'true');
-                                console.info('DEBUG: suppressed app-diagnostic after boot');
-                            }
-                        }
-                    });
-                }
-            });
-            mo.observe(diag, { attributes: true, attributeFilter: ['style', 'class'] });
-        }
-    } catch (err) { console.warn('DEBUG: suppress-diag failed', err); }
+    // (diagnostic overlay removed in production build) - nothing to do here
 }
 
 // Typewriter effect
@@ -744,7 +711,7 @@ function createFloatingHearts() {
 // Initialize everything when page loads
 window.addEventListener('DOMContentLoaded', () => {
     // small boot flag used by the diagnostic overlay
-    try { window.__APP_BOOTED__ = false; } catch {}
+
 
     // Animate main card entrance
     mainCard.classList.add('entrance');
@@ -759,7 +726,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 1800);
 
         // mark successful boot so diagnostics don't show
-        try { window.__APP_BOOTED__ = true; }
-        catch(e){ /* ignore */ }
+
     }, 900);
 });

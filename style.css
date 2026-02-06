@@ -77,45 +77,7 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-/* Diagnostic overlay (shows when JS fails or app doesn't boot) */
-#app-diagnostic {
-  position: fixed;
-  inset: 12px;
-  display: grid;
-  place-items: center;
-  z-index: 99999;
-  pointer-events: auto;
-}
-#app-diagnostic .diag-inner {
-  width: min(720px, calc(100% - 48px));
-  background: linear-gradient(180deg,#fffbe7 0%, #fff6ea 100%);
-  border: 3px solid #ff4d8d;
-  box-shadow: 0 18px 48px rgba(0,0,0,0.18);
-  padding: 22px;
-  border-radius: 14px;
-  color: #6e1630;
-  font-family: Inter, system-ui, sans-serif;
-}
-#diag-output { white-space: pre-wrap; background: #fff; padding: 12px; border-radius: 8px; margin: 12px 0; max-height:220px; overflow:auto; border:1px solid rgba(0,0,0,0.06)}
-#app-diagnostic .diag-actions { display:flex; gap:10px; flex-wrap:wrap }
-#app-diagnostic button.btn { background:#ffeef0; color:#6e1630; border:1px solid #ffd6de }
-
-/* PANIC OVERRIDE: force UI visible and interactive (temporary hotfix) */
-.panic-restore * { pointer-events: auto !important; visibility: visible !important; }
-.panic-restore body, .panic-restore .container, .panic-restore #main-card, .panic-restore .card {
-  opacity: 1 !important;
-  transform: none !important;
-  display: block !important;
-  z-index: 999999 !important;
-}
-/* Ensure no fullscreen overlay blocks interaction */
-.panic-restore *[data-diagnostic-overlay], .panic-restore .floating-sparkles, .panic-restore .full-overlay {
-  pointer-events: none !important;
-  opacity: 0.001 !important;
-  visibility: hidden !important;
-}
-/* Visual cue so user sees the app after panic restore */
-.panic-restore #main-card { outline: 6px solid rgba(255,224,102,0.9) !important; box-shadow: 0 30px 80px rgba(0,0,0,0.28) !important; }
+/* (dev diagnostic / panic-restore styles removed) */
 /* Music toggle button */
 .music-toggle {
     position: fixed;
