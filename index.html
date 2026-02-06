@@ -12,6 +12,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Early diagnostic overlay (appears if app fails to boot) -->
+    <div id="app-diagnostic" aria-live="polite" role="alert" style="display:none;">
+      <div class="diag-inner">
+        <h2>App failed to start — quick diagnostics</h2>
+        <div id="diag-output">Waiting for app...</div>
+        <div class="diag-actions">
+          <button id="diag-run" class="btn">Run diagnostics</button>
+          <button id="diag-force" class="btn">Force-enable UI</button>
+          <button id="diag-copy" class="btn">Copy diag text</button>
+          <button id="diag-devtools" class="btn">How to open DevTools</button>
+        </div>
+        <details><summary>What to send me</summary>
+          <ol><li>Open DevTools (F12) → Console and copy any errors</li><li>Click <em>Run diagnostics</em> and paste the output here</li></ol>
+        </details>
+      </div>
+    </div>
+
     <!-- Skip link for keyboard users -->
     <a class="skip-link" href="#main-content">Skip to content</a>
     <button id="share-btn" class="btn" tabindex="0">Share this cuteness!</button>
@@ -113,6 +130,107 @@
     <!-- Accessible music control -->
     <button id="music-toggle" class="btn music-toggle" aria-pressed="false" aria-label="Play background music" title="Play/pause music">♪</button>
 
+    <script>
+    // Early diagnostic watcher — runs before main.js so it can catch parse/runtime failures
+    (function(){
+      const diag = document.getElementById('app-diagnostic');
+      window.__DIAG_LOGS__ = [];
+      window.addEventListener('error', ev => {
+        window.__DIAG_LOGS__.push('ERROR: ' + (ev.message || ev.error || ev.filename || ev.type));
+      });
+      window.addEventListener('unhandledrejection', ev => {
+        window.__DIAG_LOGS__.push('UNHANDLED REJECTION: ' + (ev.reason && ev.reason.message ? ev.reason.message : String(ev.reason)));
+      });
+
+      function showDiag(msg){
+        if (!diag) return;
+        diag.style.display = 'grid';
+        const out = document.getElementById('diag-output');
+        out.textContent = msg + '\n\nConsole (last):\n' + (window.__DIAG_LOGS__.slice(-12).join('\n') || '(none)');
+      }
+
+      // Buttons
+      document.addEventListener('click', (e) => {
+        if (!e.target) return;
+        if (e.target.id === 'diag-run') {
+          const main = document.getElementById('main-card');
+          const bodyEmpty = document.body.children.length < 6;
+          const visible = main && window.getComputedStyle(main).display !== 'none' && window.getComputedStyle(main).opacity !== '0';
+          showDiag('bootFlag=' + !!window.__APP_BOOTED__ + '\nbodyChildren=' + document.body.children.length + '\nmainPresent=' + !!main + '\nmainVisible=' + visible + '\nuserAgent=' + navigator.userAgent);
+        }
+        if (e.target.id === 'diag-force') {
+          // best-effort fixes: unhide main elements and enable pointer-events
+          document.querySelectorAll('body *').forEach(el => { el.style.pointerEvents = 'auto'; });
+          ['main-card','buttons','success-card'].forEach(id => {
+            const el = document.getElementById(id); if (el) { el.style.display = 'block'; el.style.opacity = '1'; }
+          });
+          showDiag('Forced UI enable applied — try interacting now.');
+        }
+        if (e.target.id === 'diag-copy') {
+          const out = document.getElementById('diag-output').textContent;
+          try { navigator.clipboard.writeText(out); e.target.textContent = 'Copied!'; setTimeout(()=> e.target.textContent = 'Copy diag text',1200);} catch { alert(out); }
+        }
+        if (e.target.id === 'diag-devtools') {
+          showDiag('Open DevTools: press F12 (Windows) / Cmd+Option+I (mac). Look at Console tab and paste any errors here.');
+        }
+      });
+
+      // If the app hasn't booted after 1.4s show the overlay and run checks
+      function inspectTopLayer() {
+        try {
+          const all = Array.from(document.querySelectorAll('body *'));
+          const vw = innerWidth, vh = innerHeight;
+          const candidates = all.filter(el => {
+            const r = el.getBoundingClientRect();
+            return r.width >= vw * 0.9 && r.height >= vh * 0.9;
+          });
+          if (!candidates.length) return 'topLayer: none';
+          return candidates.map(el => {
+            const s = getComputedStyle(el);
+            return ['tag='+el.tagName.toLowerCase(), 'id='+ (el.id||'<no-id>'), 'cls='+ (el.className||'<no-class>').toString().slice(0,80), 'z=' + (s.zIndex||'<auto>'), 'pe=' + s.pointerEvents, 'vis=' + s.visibility, 'opa=' + s.opacity].join(' | ');
+          }).join('\n----\n');
+        } catch (err) { return 'inspectTopLayer error: '+String(err); }
+      }
+
+      setTimeout(() => {
+        if (!window.__APP_BOOTED__) {
+          const report = inspectTopLayer();
+          // If something large is covering the viewport and has pointer-events enabled, auto-apply the panic-restore so the user can interact immediately.
+          if (report && report !== 'topLayer: none' && /pe=auto|pe=visible/.test(report)) {
+            document.documentElement.classList.add('panic-restore');
+          }
+          showDiag('App did not signal successful boot within 1.4s.\nThis overlay helps gather diagnostics you can paste to the developer.\n\n' + report);
+        }
+      }, 1400);
+
+      // enhance the existing diag buttons to apply a stronger 'panic restore' when requested
+      document.addEventListener('click', (e) => {
+        if (!e.target) return;
+        if (e.target.id === 'diag-run') {
+          const main = document.getElementById('main-card');
+          const bodyEmpty = document.body.children.length < 6;
+          const visible = main && window.getComputedStyle(main).display !== 'none' && window.getComputedStyle(main).opacity !== '0';
+          showDiag('bootFlag=' + !!window.__APP_BOOTED__ + '\nbodyChildren=' + document.body.children.length + '\nmainPresent=' + !!main + '\nmainVisible=' + visible + '\nuserAgent=' + navigator.userAgent + '\n\n' + inspectTopLayer());
+        }
+        if (e.target.id === 'diag-force') {
+          // best-effort fixes: unhide main elements and enable pointer-events
+          document.documentElement.classList.add('panic-restore');
+          document.querySelectorAll('body *').forEach(el => { el.style.pointerEvents = 'auto'; el.style.visibility = 'visible'; });
+          ['main-card','buttons','success-card'].forEach(id => {
+            const el = document.getElementById(id); if (el) { el.style.display = 'block'; el.style.opacity = '1'; el.style.transform = 'none'; }
+          });
+          showDiag('Forced UI (panic-restore) applied — try interacting now.\n\n' + inspectTopLayer());
+        }
+        if (e.target.id === 'diag-copy') {
+          const out = document.getElementById('diag-output').textContent;
+          try { navigator.clipboard.writeText(out); e.target.textContent = 'Copied!'; setTimeout(()=> e.target.textContent = 'Copy diag text',1200);} catch { alert(out); }
+        }
+        if (e.target.id === 'diag-devtools') {
+          showDiag('Open DevTools: press F12 (Windows) / Cmd+Option+I (mac). Look at Console tab and paste any errors here.');
+        }
+      });
+    })();
+    </script>
     <script src="main.js"></script>
 </body>
 </html>

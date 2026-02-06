@@ -708,6 +708,9 @@ function createFloatingHearts() {
 
 // Initialize everything when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    // small boot flag used by the diagnostic overlay
+    try { window.__APP_BOOTED__ = false; } catch {}
+
     // Animate main card entrance
     mainCard.classList.add('entrance');
     setTimeout(() => {
@@ -719,5 +722,9 @@ window.addEventListener('DOMContentLoaded', () => {
             const w = window.innerWidth, h = window.innerHeight;
             createSparkle(Math.random() * w, Math.random() * h * 0.7 + 30);
         }, 1800);
+
+        // mark successful boot so diagnostics don't show
+        try { window.__APP_BOOTED__ = true; }
+        catch(e){ /* ignore */ }
     }, 900);
 });
