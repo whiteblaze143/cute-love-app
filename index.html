@@ -12,17 +12,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-        <button id="share-btn" class="btn" style="position:fixed;bottom:24px;right:24px;z-index:200;">Share this cuteness!</button>
+    <!-- Skip link for keyboard users -->
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <button id="share-btn" class="btn" tabindex="0">Share this cuteness!</button>
     <div class="cute-points-bar">
         <span class="pixel-heart">❤️</span>
         <span id="cute-points">0</span> Cute Points
     </div>
     <div class="floating-hearts"></div>
     <div class="floating-sparkles"></div>
-    <!-- Cuddly animal corner stickers -->
-    <div class="animal-sticker bear-sticker"></div>
-    <div class="animal-sticker bunny-sticker"></div>
+    <!-- Cuddly animal corner stickers (now semantic buttons for accessibility) -->
+    <button class="animal-sticker bear-sticker" aria-label="teddy bear sticker" tabindex="0"></button>
+    <button class="animal-sticker bunny-sticker" aria-label="bunny sticker" tabindex="0"></button>
     <div class="container">
+        <main id="main-content" role="main">
         <div class="card" id="main-card">
             <div class="header">
                 <h1 class="secret-title">Just for you...</h1>
@@ -34,11 +37,11 @@
                     <div class="cursor">|</div>
                 </div>
                 
-                <div class="button-container" id="buttons" style="display: none;">
-                    <button class="btn yes-btn" id="yes-btn">
+                <div class="button-container" id="buttons">
+                    <button class="btn yes-btn" id="yes-btn" aria-pressed="false" tabindex="0">
                         <i class="fas fa-heart"></i> Yes, absolutely!
                     </button>
-                    <button class="btn no-btn" id="no-btn">
+                    <button class="btn no-btn" id="no-btn" aria-pressed="false" tabindex="0">
                         <i class="fas fa-question"></i> Umm, let me think...
                     </button>
                 </div>
@@ -52,7 +55,7 @@
         </div>
         
         <!-- Hidden success screen -->
-        <div class="card success-card" id="success-card" style="display: none;">
+        <div class="card success-card" id="success-card">
             <div class="success-content">
                 <h1 class="success-title">You just made my whole year, <span class="nickname">Joji</span> ❤️</h1>
                 
@@ -85,13 +88,13 @@
                 
                 <div class="photo-frame">
                     <div class="polaroid">
-                        <div class="polaroid-img" id="memory-photo">
+                        <button class="polaroid-img" id="memory-photo" tabindex="0" aria-label="photo frame - drop a heart here">
                             <!-- Photo will appear here -->
                             <div class="photo-placeholder">
                                 <i class="fas fa-heart"></i>
                                 <p>Our favorite memory</p>
                             </div>
-                        </div>
+                        </button> 
                         <div class="polaroid-caption">Every moment with you is my favorite ❤️</div>
                     </div>
                 </div>
@@ -103,10 +106,13 @@
         </div>
     </div>
     
-    <audio id="background-music" loop>
+    <audio id="background-music" loop preload="none" aria-hidden="true">
         <source src="https://assets.mixkit.co/music/preview/mixkit-love-of-my-life-1031.mp3" type="audio/mpeg">
     </audio>
-    
+
+    <!-- Accessible music control -->
+    <button id="music-toggle" class="btn music-toggle" aria-pressed="false" aria-label="Play background music" title="Play/pause music">♪</button>
+
     <script src="main.js"></script>
 </body>
 </html>

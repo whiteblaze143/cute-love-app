@@ -1,4 +1,59 @@
 // Share button logic
+// DEBUG: lightweight runtime checks to surface errors and ensure interactivity during local dev.
+// Toggle visual debug outlines with Ctrl+Shift+D
+(function _debugInit(){
+  window.addEventListener('error', e => {
+    console.error('Runtime error (captured):', e.message, e.filename + ':' + e.lineno);
+    const dbg = document.getElementById('dev-debug-panel') || (function(){
+      const p = document.createElement('div');
+      p.id = 'dev-debug-panel';
+      p.style.position='fixed';
+      p.style.right='12px';
+      p.style.top='12px';
+      p.style.zIndex='9999';
+      p.style.background='rgba(0,0,0,0.6)';
+      p.style.color='#fff';
+      p.style.padding='8px 10px';
+      p.style.fontSize='12px';
+      p.style.borderRadius='8px';
+      p.style.fontFamily='monospace';
+      document.body.appendChild(p);
+      return p;
+    })();
+    dbg.textContent = 'JS error: ' + e.message;
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    // add debug outlines but do NOT change pointer-events unless debug is toggled by the developer
+    ['.animal-sticker', '.floating-hearts .heart', '.btn', '#main-card', '#buttons'].forEach(s => {
+      document.querySelectorAll(s).forEach(el => el.classList?.add('debug-interactive-outline'));
+    });
+    console.log('DEBUG: checked interactive elements:', {
+      shareBtn: !!document.getElementById('share-btn'),
+      yesBtn: !!document.getElementById('yes-btn'),
+      noBtn: !!document.getElementById('no-btn'),
+      hearts: document.querySelectorAll('.floating-hearts .heart').length
+    });
+  });
+
+  // When debug outlines are toggled on, also enable pointer interactions for elements that were intentionally decorative
+  const _toggleDebugPointerEvents = (on) => {
+    const sel = ['.animal-sticker', '.floating-hearts .heart'];
+    sel.forEach(s => document.querySelectorAll(s).forEach(el => el.style.pointerEvents = on ? 'auto' : ''));
+  };
+  window.addEventListener('keydown', (ev) => {
+    if (ev.ctrlKey && ev.shiftKey && ev.key.toLowerCase() === 'd') {
+      const on = document.body.classList.toggle('show-debug-outlines');
+      _toggleDebugPointerEvents(on);
+      console.log('DEBUG: toggled outlines');
+    }
+  });
+  window.addEventListener('keydown', (ev) => {
+    if (ev.ctrlKey && ev.shiftKey && ev.key.toLowerCase() === 'd') {
+      document.body.classList.toggle('show-debug-outlines');
+      console.log('DEBUG: toggled outlines');
+    }
+  });
+})();
 const shareBtn = document.getElementById('share-btn');
 if (shareBtn) {
     shareBtn.addEventListener('click', async () => {
@@ -146,15 +201,101 @@ function resetTipTimeout() {
     document.addEventListener(evt, resetTipTimeout);
 });
 resetTipTimeout();
-// Cursor-following sparkle/heart trail
-let lastTrailTime = 0;
+// Cursor-following sparkle/heart trail (rAF-throttled, pauses when tab is hidden)
+let _trailQueued = false;
+let _lastTrail = 0;
+let _lastMousePos = { x: 0, y: 0 };
+function _trailRAF() {
+    _trailQueued = false;
+    const now = performance.now();
+    if (document.hidden) return; // pause when not visible
+    if (now - _lastTrail > 22) {
+        createSparkle(_lastMousePos.x, _lastMousePos.y);
+        _lastTrail = now;
+    }
+}
 document.addEventListener('mousemove', (e) => {
-    const now = Date.now();
-    if (now - lastTrailTime > 22) { // limit trail density
-        createSparkle(e.clientX, e.clientY);
-        lastTrailTime = now;
+    _lastMousePos.x = e.clientX;
+    _lastMousePos.y = e.clientY;
+    if (!_trailQueued) {
+        _trailQueued = true;
+        requestAnimationFrame(_trailRAF);
     }
 });
+
+// Keyboard activation for focusable interactive elements (hearts, stickers, popups)
+document.addEventListener('keydown', (ev) => {
+    const active = document.activeElement;
+    if (!active) return;
+    if (ev.key === 'Enter' || ev.key === ' ') {
+        if (active.classList.contains('heart') || active.classList.contains('animal-sticker') || active.classList.contains('animal-popup') || active.classList.contains('polaroid-img')) {
+            ev.preventDefault();
+            active.click();
+        }
+    }
+});
+
+// Shared, lazy AudioContext to avoid creating many contexts and to allow resume on user gesture
+let _sharedAudioCtx = null;
+function getAudioCtx() {
+    if (!_sharedAudioCtx) {
+        _sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // resume on first user gesture if suspended
+        const resumeIfNeeded = () => {
+            if (_sharedAudioCtx.state === 'suspended') _sharedAudioCtx.resume().catch(()=>{});
+            window.removeEventListener('pointerdown', resumeIfNeeded);
+            window.removeEventListener('keydown', resumeIfNeeded);
+        };
+        window.addEventListener('pointerdown', resumeIfNeeded, { once: true });
+        window.addEventListener('keydown', resumeIfNeeded, { once: true });
+    }
+    return _sharedAudioCtx;
+}
+
+// Update sound functions to reuse shared audio context
+function playPixelSound(type) {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    if (type === 'coin') {
+        o.type = 'square'; o.frequency.value = 880;
+        g.gain.setValueAtTime(0.12, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(1760, ctx.currentTime + 0.18);
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.18);
+        o.start(); o.stop(ctx.currentTime + 0.18);
+    } else if (type === 'boop') {
+        o.type = 'triangle'; o.frequency.value = 440;
+        g.gain.setValueAtTime(0.09, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(220, ctx.currentTime + 0.13);
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.13);
+        o.start(); o.stop(ctx.currentTime + 0.13);
+    }
+}
+
+// reuse audio context in playSound too
+function playSound(type) {
+    const audioContext = getAudioCtx();
+    if (!audioContext) return;
+    if (type === 'click') {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.frequency.value = 400;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+    } else if (type === 'celebrate') {
+        // small melody
+        playPixelSound('coin');
+        setTimeout(() => playPixelSound('boop'), 90);
+        setTimeout(() => playPixelSound('coin'), 160);
+    }
+}
 // Confetti burst logic
 const confettiColors = ['#ffe066', '#ffb3d1', '#ffafbd', '#b5ead7', '#c7ceea', '#fffbe7', '#ff4d8d'];
 function burstConfettiAtElement(el, count = 18) {
@@ -274,6 +415,25 @@ function init() {
     // Start with gentle music (optional - user interaction required for autoplay)
     backgroundMusic.volume = 0.3;
     
+    // Music toggle control (accessible)
+    const musicToggle = document.getElementById('music-toggle');
+    if (musicToggle) {
+        musicToggle.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(()=>{});
+                musicToggle.setAttribute('aria-pressed','true');
+                musicToggle.setAttribute('aria-label','Pause background music');
+            } else {
+                backgroundMusic.pause();
+                musicToggle.setAttribute('aria-pressed','false');
+                musicToggle.setAttribute('aria-label','Play background music');
+            }
+        });
+        musicToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); musicToggle.click(); }
+        });
+    }
+
     // Start the story
     setTimeout(() => {
         typeNextLine();
