@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Favorite Person ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;600&family=Pacifico&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'cute-cream': '#fffbe7',
+              'cute-pink': '#ff4d8d',
+              'cute-maroon': '#6e1630',
+              'cute-yellow': '#ffe066',
+              'cute-blue': '#b5ead7',
+            },
+            fontFamily: {
+              pixel: ['"Press Start 2P"', 'cursive'],
+              hand: ['"Dancing Script"', 'cursive'],
+              title: ['"Pacifico"', 'cursive'],
+              body: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'wiggle': 'wiggle 1s ease-in-out infinite',
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+              'shake-hard': 'shakeHard 0.2s cubic-bezier(.36,.07,.19,.97) both',
+              'spin-slow': 'spin 8s linear infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              wiggle: {
+                '0%, 100%': { transform: 'rotate(-3deg)' },
+                '50%': { transform: 'rotate(3deg)' },
+              },
+              popIn: {
+                '0%': { opacity: '0', transform: 'scale(0.5)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              shake: {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+              },
+              shakeHard: {
+                '0%, 100%': { transform: 'translate3d(0, 0, 0)' },
+                '10%, 90%': { transform: 'translate3d(-8px, -2px, 0)' },
+                '20%, 80%': { transform: 'translate3d(8px, 2px, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-10px, 4px, 0)' },
+                '40%, 60%': { transform: 'translate3d(10px, -4px, 0)' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="24" font-size="24">❤️</text></svg>') 8 8, auto;
+        background-image: radial-gradient(#ffafbd 1px, transparent 1px), radial-gradient(#ffe066 1px, transparent 1px);
+        background-size: 40px 40px;
+        background-position: 0 0, 20px 20px;
+        background-color: #fffbe7;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #fffbe7; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ff4d8d; 
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #6e1630; 
+      }
+    </style>
+
+<link rel="stylesheet" href="/index.css">
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/cute-love-app/assets/index-Ce5ZY2VM.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
